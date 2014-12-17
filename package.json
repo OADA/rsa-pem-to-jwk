@@ -1,6 +1,6 @@
 {
   "name": "rsa-pem-to-jwk",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Converts PEM encoded RSA public and private keys to the JWK (JSON Web Key) format.",
   "main": "rsa-pem-to-jwk.js",
   "scripts": {
