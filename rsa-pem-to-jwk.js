@@ -30,15 +30,21 @@ var objectAssign = require('object-assign');
  *  - rsaPemToJwk('...', {...});
  */
 module.exports = function rsaPemToJwk(pem, extraKeys, type) {
+  // Unpack the PEM
+  var key = rsaUnpack(pem);
+  if (key === undefined) {
+    return undefined;
+  }
+
+  // Process parameters
   if (typeof extraKeys === 'string') {
     type = extraKeys;
     extraKeys = {};
   }
-  type = type || 'public';
+  type = type || (key.privateExponent !== undefined ? 'private' : 'public');
 
-  // Unpack the PEM
-  var key = rsaUnpack(pem);
-  if (key === undefined) {
+  // Requested private JWK but gave a public PEM
+  if (type == 'private' && key.privateExponent === undefined) {
     return undefined;
   }
 
