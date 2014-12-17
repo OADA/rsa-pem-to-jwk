@@ -83,6 +83,44 @@ or just
 $ gulp
 ```
 
+### PEM Format
+
+This module expects the input RSA keys to be in "PEM" format. Most tools agree
+on what this means for private keys but some tools have different definitions
+for public keys.
+
+#### Private Keys
+
+Both OpenSSH and OpenSSL use the same RSA private key PEM format. Below is an
+example of generating such a PEM of a 2048 bit RSA private key with each tool:
+
+**OpenSSL:**
+```sh
+$ openssl genrsa -out private.pem 2048
+```
+
+**OpenSSH:**
+```sh
+$ ssh-keygen -t rsa -b 2048 -m PEM -f private.pem
+```
+
+#### Public Keys
+
+The expected PEM format for public keys is `RSAPublicKey`. This is the default
+output PEM format for the OpenSSH key generation tool but not for OpenSSL
+(requires -RSAPublicKey_out flag). Below is an example of generating the public
+key from a RSA private key PEM with each tool:
+
+**OpenSSL**:
+```sh
+$ openssl rsa -in private.pem -RSAPublicKey_out -out public.pem
+```
+
+**OpenSSH**:
+```sh
+$ ssh-keygen -f private.pem -e -m PEM > public.pem
+```
+
 ## API Reference
 
 ### rsaPemToJwk(pem, extraKeys, type)
