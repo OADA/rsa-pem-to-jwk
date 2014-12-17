@@ -3,7 +3,22 @@
 [![Dependency Status](https://david-dm.org/oada/rsa-pem-to-jwk.svg)](https://david-dm.org/oada/rsa-pem-to-jwk)
 [![License](http://img.shields.io/:license-Apache%202.0-green.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
+# Table of Contents
+
+- [rsa-pem-to-jwk](#rsa-pem-to-jwk)
+- [Getting Started](#getting-started)
+  - [Installation](#installation)
+  - [Running the tests, coverage, and style checks](#running-the-tests-coverage-and-style-checks)
+  - [PEM Format](#pem-format)
+    - [Private Keys](#private-keys)
+    - [Public Keys](#public-keys)
+- [API Reference](#api-reference)
+  - [rsaPemToJwk(pem, extraKeys, type)](#rsapemtojwkpem-extrakeys-type)
+    - [Parameters](#parameters)
+    - [Usage Example](#usage-example)
+
 # rsa-pem-to-jwk
+
 Converts PEM encoded RSA public and private keys to the [JWK (JSON Web
 Key)][jwk] format.
 
@@ -53,15 +68,15 @@ alternatively, the PEM can also be converted to a public RSA JWK:
 }
 ```
 
-## Getting Started
+# Getting Started
 
-### Installation
+## Installation
 The library can be installed with `npm` using
 ```sh
 $ npm install rsa-pem-to-jwk
 ```
 
-### Running the tests, coverage, and style checks
+## Running the tests, coverage, and style checks
 The module's tests are run with:
 ```sh
 $ npm test
@@ -83,13 +98,13 @@ or just
 $ gulp
 ```
 
-### PEM Format
+## PEM Format
 
 This module expects the input RSA keys to be in "PEM" format. Most tools agree
 on what this means for private keys but some tools have different definitions
 for public keys.
 
-#### Private Keys
+### Private Keys
 
 Both OpenSSH and OpenSSL use the same RSA private key PEM format. Below is an
 example of generating such a PEM of a 2048 bit RSA private key with each tool:
@@ -104,7 +119,7 @@ $ openssl genrsa -out private.pem 2048
 $ ssh-keygen -t rsa -b 2048 -m PEM -f private.pem
 ```
 
-#### Public Keys
+### Public Keys
 
 The expected PEM format for public keys is `RSAPublicKey`. This is the default
 output PEM format for the OpenSSH key generation tool but not for OpenSSL
@@ -121,13 +136,13 @@ $ openssl rsa -in private.pem -RSAPublicKey_out -out public.pem
 $ ssh-keygen -f private.pem -e -m PEM > public.pem
 ```
 
-## API Reference
+# API Reference
 
-### rsaPemToJwk(pem, extraKeys, type)
+## rsaPemToJwk(pem, extraKeys, type)
 Converts PEM encoded RSA public and private keys to the [JWK (JSON Web
 Token)][jwk] format.
 
-#### Parameters ####
+### Parameters
 `pem` {String} of a PEM encoded RSA public or private key.
 
 `extraKeys` {Object} whose keys appear in the JWK body. **Default**: *{}*
@@ -139,7 +154,7 @@ Token)][jwk] format.
 
     **Default**: *type of input PEM*
 
-#### Usage Example ####
+### Usage Example
 ```javascript
 var fs = require('fs');
 var rsaPemToJwk = require('rsa-pem-to-jwk');
