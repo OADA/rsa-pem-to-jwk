@@ -9,7 +9,6 @@ deploy:
     secure: IMkSB4fm/1IriMMi+lLQfWuzpK3zUudXOTLj2ugC7cA6gJUVlDTvlCEcx6ClUN6IOVAwSZIGKIrJPMNOzcTYPyJh+R01KIhuJ+NkhdlssTfg7hVih5V46X4QWh4x6dXeanAzEiN/1U6ewKiJHu66YqR+I7qDvdLjnScx1YlFup0=
   on:
     tags: true
-    branch: master
     repo: OADA/rsa-pem-to-jwk
 before_install:
 - npm install -g gulp

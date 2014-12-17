@@ -5,7 +5,7 @@
   "main": "rsa-pem-to-jwk.js",
   "scripts": {
     "test": "./node_modules/.bin/_mocha -w",
-    "cover": "./node_modules/.bin/istanbul cover --preload-sources -x gulpfile.js node_modules/.bin/_mocha -- -R spec",
+    "cover": "./node_modules/.bin/istanbul cover --include-all-sources -x gulpfile.js node_modules/.bin/_mocha -- -R spec",
     "clean": "rm -rf ./coverage"
   },
   "repository": {
