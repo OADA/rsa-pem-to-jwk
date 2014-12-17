@@ -1,7 +1,7 @@
 {
   "name": "rsa-pem-to-jwk",
   "version": "1.0.0",
-  "description": "Converts a public or private PEM encoded RSA key to JWK (JSON Web Key)",
+  "description": "Converts PEM encoded RSA public and private keys to the JWK (JSON Web Key) format.",
   "main": "rsa-pem-to-jwk.js",
   "scripts": {
     "test": "./node_modules/.bin/_mocha -w",
