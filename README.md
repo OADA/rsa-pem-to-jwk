@@ -140,7 +140,7 @@ $ ssh-keygen -f private.pem -e -m PEM > public.pem
 
 ## rsaPemToJwk(pem, extraKeys, type)
 Converts PEM encoded RSA public and private keys to the [JWK (JSON Web
-Token)][jwk] format.
+Key)][jwk] format.
 
 ### Parameters
 `pem` {String} of a PEM encoded RSA public or private key.
