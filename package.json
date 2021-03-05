@@ -5,7 +5,7 @@
   "main": "rsa-pem-to-jwk.js",
   "scripts": {
     "test": "./node_modules/.bin/_mocha -w",
-    "cover": "./node_modules/.bin/istanbul cover --include-all-sources -x gulpfile.js node_modules/.bin/_mocha -- -R spec",
+    "cover": "./node_modules/.bin/istanbul cover --include-all-sources node_modules/.bin/_mocha -- -R spec",
     "clean": "rm -rf ./coverage"
   },
   "repository": {
@@ -28,11 +28,7 @@
   "homepage": "https://github.com/OADA/rsa-pem-to-jwk",
   "devDependencies": {
     "chai": "^1.10.0",
-    "gulp": "^3.8.10",
-    "gulp-jscs": "^1.3.1",
-    "gulp-jshint": "^1.9.0",
     "istanbul": "^0.3.5",
-    "jshint-stylish": "^1.0.0",
     "mocha": "^2.0.1",
     "coveralls": "~2.11.2"
   },
