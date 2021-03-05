@@ -26,7 +26,7 @@ function arrayBufferToBase64(buffer) {
 }
 
 function rsaPemUnpack(pemKey) {
-    pemKey = pemKey.trim().split("\n");
+    pemKey = String(pemKey).trim().split("\n");
 
     // Check and remove RSA key header/footer
     let keyType = (/-----BEGIN RSA (PRIVATE|PUBLIC) KEY-----/.exec(pemKey.shift()) || [])[1];
