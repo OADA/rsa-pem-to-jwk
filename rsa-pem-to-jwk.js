@@ -55,10 +55,11 @@ module.exports = function rsaPemToJwk(pemKey, extraKeys, type) {
 
     // Check requested JWK and given PEM types
     keyType = keyType.toLowerCase();
-    if (type === 'private' && keyType === 'public') {
+    if (!type) {
+        type = keyType;
+    } else if (type === 'private' && keyType === 'public') {
         throw Error(`RSA type mismatch: requested ${type}, given ${keyType}.`);
     }
-    type = keyType;
 
     // PEM base64 to ArrayBuffer
     const derKey = new Uint8Array(base64toArrayBuffer(pemKey.join('')));
