@@ -21,8 +21,8 @@ function base64toArrayBuffer(base64) {
 
 function arrayBufferToBase64(buffer) {
     return typeof btoa !== 'undefined' ?
-        btoa(String.fromCharCode(...new Uint8Array(buffer.buffer || buffer))) : // Browser API
-        Buffer(buffer.buffer || buffer).toString('base64'); // Node.js API
+        btoa(String.fromCharCode(...new Uint8Array(buffer))) : // Browser API
+        Buffer.from(buffer).toString('base64'); // Node.js API
 }
 
 function rsaPemUnpack(pemKey) {
