@@ -48,8 +48,8 @@ module.exports = function rsaPemToJwk(pemKey, extraKeys, type) {
     pemKey = String(pemKey).trim().split("\n");
 
     // Check and remove RSA key header/footer
-    let keyType = (/-----BEGIN RSA (PRIVATE|PUBLIC) KEY-----/.exec(pemKey.shift()) || [])[1];
-    if (!keyType || !RegExp(`-----END RSA ${keyType} KEY-----`).exec(pemKey.pop())) {
+    let keyType = (/-----BEGIN(?: RSA)? (PRIVATE|PUBLIC) KEY-----/.exec(pemKey.shift()) || [])[1];
+    if (!keyType || !RegExp(`-----END( RSA)? ${keyType} KEY-----`).exec(pemKey.pop())) {
         //throw Error('Headers not supported.');
         return;
     }
