@@ -15,7 +15,6 @@
 'use strict';
 
 var rsaUnpack = require('rsa-unpack');
-var objectAssign = require('object-assign');
 
 /*
  *  Parameters:
@@ -59,24 +58,22 @@ module.exports = function rsaPemToJwk(pem, extraKeys, type) {
     }
 
     // The public portion is always present
-    var r = objectAssign({kty: 'RSA'}, extraKeys, {
+    return {
+        kty: 'RSA',
+        extraKeys,
         n: base64url(key.modulus),
         e: base64url(exp),
-    });
 
-    // Add private
-    if (type === 'private') {
-        objectAssign(r, {
+        // Add private
+        ...type === 'private' && {
             d: base64url(key.privateExponent),
             p: base64url(key.prime1),
             q: base64url(key.prime2),
             dp: base64url(key.exponent1),
             dq: base64url(key.exponent2),
-            qi: base64url(key.coefficient),
-        });
+            qi: base64url(key.coefficient)
+        }
     }
-
-    return r;
 };
 
 function base64url(b) {
