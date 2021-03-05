@@ -16,7 +16,7 @@
 function base64toArrayBuffer(base64) {
     return typeof atob !== 'undefined' ?
         Uint8Array.from(atob(base64), byte => byte.charCodeAt(0)) : // Browser API
-        new Uint8Array(Buffer.from(base64, 'base64')); // Node.js API
+        Uint8Array.from(Buffer.from(base64, 'base64')); // Node.js API
 }
 
 function arrayBufferToBase64(buffer) {
