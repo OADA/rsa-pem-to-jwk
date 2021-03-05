@@ -13,7 +13,67 @@
  * limitations under the License.
  */
 
-var rsaUnpack = require('rsa-unpack');
+function base64toArrayBuffer(base64) {
+    return typeof atob !== 'undefined' ?
+        Uint8Array.from(atob(base64), byte => byte.charCodeAt(0)) : // Browser API
+        new Uint8Array(Buffer.from(base64, 'base64')); // Node.js API
+}
+
+function arrayBufferToBase64(buffer) {
+    return typeof btoa !== 'undefined' ?
+        btoa(String.fromCharCode(...new Uint8Array(buffer.buffer || buffer))) : // Browser API
+        Buffer(buffer.buffer || buffer).toString('base64'); // Node.js API
+}
+
+function rsaPemUnpack(pemKey) {
+    pemKey = pemKey.trim().split("\n");
+
+    // Check and remove RSA key header/footer
+    let keyType = (/-----BEGIN RSA (PRIVATE|PUBLIC) KEY-----/.exec(pemKey.shift()) || [])[1];
+    if (!keyType || !RegExp(`-----END RSA ${keyType} KEY-----`).exec(pemKey.pop())) {
+        throw Error('Headers not supported.');
+    }
+
+    // Check requested JWK and given PEM types
+    keyType = keyType.toLowerCase();
+    if (type !== keyType) {
+        throw Error(`RSA type mismatch: requested ${type}, given ${keyType}.`);
+    }
+    type = keyType;
+
+    // PEM base64 to ArrayBuffer
+    const derKey = new Uint8Array(base64toArrayBuffer(pemKey.join('')));
+
+    // DER reading offset
+    let offset = {
+        private: derKey[1] & 0x80 ? derKey[1] - 0x80 + 5 : 7,
+        public: derKey[1] & 0x80 ? derKey[1] - 0x80 + 2 : 2
+    }[keyType];
+
+    function read() {
+        let s = derKey[offset + 1];
+
+        if (s & 0x80) {
+            let n = s - 0x80;
+            s = new DataView(derKey.buffer)[ ['getUint8', 'getUint16'][n - 1] ](offset + 2);
+            offset += n;
+        }
+        offset += 2;
+
+        return derKey.slice(offset, offset += s);
+    }
+
+    return {
+        modulus: read(),
+        publicExponent: read(),
+        privateExponent: read(),
+        prime1: read(),
+        prime2: read(),
+        exponent1: read(),
+        exponent2: read(),
+        coefficient: read()
+    };
+}
 
 /*
  *  Parameters:
@@ -27,57 +87,37 @@ var rsaUnpack = require('rsa-unpack');
  *  - rsaPemToJwk('...', 'private');
  *  - rsaPemToJwk('...', {...});
  */
-module.exports = function rsaPemToJwk(pem, extraKeys, type) {
-    // Unpack the PEM
-    var key = rsaUnpack(pem);
-    if (key === undefined) {
-        return undefined;
-    }
-
+module.exports = function rsaPemToJwk(pemKey, extraKeys, type) {
     // Process parameters
     if (typeof extraKeys === 'string') {
         type = extraKeys;
         extraKeys = {};
     }
-    type = type || (key.privateExponent !== undefined ? 'private' : 'public');
 
-    // Requested private JWK but gave a public PEM
-    if (type == 'private' && key.privateExponent === undefined) {
-        return undefined;
+    // Unpack the PEM
+    const key = rsaPemUnpack(pemKey);
+
+    function base64Url(buffer) {
+        return arrayBufferToBase64(buffer)
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=+$/g, '');
     }
 
-    // Make the public exponent into a buffer of minimal size
-    var expSize = Math.ceil(Math.log(key.publicExponent) / Math.log(256));
-    var exp = new Buffer(expSize);
-    var v = key.publicExponent;
-
-    for (var i = expSize - 1; i >= 0; i--) {
-        exp.writeUInt8(v % 256, i);
-        v = Math.floor(v / 256);
-    }
-
-    // The public portion is always present
     return {
         kty: 'RSA',
         ...extraKeys,
-        n: base64url(key.modulus),
-        e: base64url(exp),
-
-        // Add private
-        ...type === 'private' && {
-            d: base64url(key.privateExponent),
-            p: base64url(key.prime1),
-            q: base64url(key.prime2),
-            dp: base64url(key.exponent1),
-            dq: base64url(key.exponent2),
-            qi: base64url(key.coefficient)
+        // The public portion is always present
+        n: base64Url(key.modulus),
+        e: base64Url(key.publicExponent),
+        // Read private part
+        ...type === "private" && {
+            d: base64Url(key.privateExponent),
+            p: base64Url(key.prime1),
+            q: base64Url(key.prime2),
+            dp: base64Url(key.exponent1),
+            dq: base64Url(key.exponent2),
+            qi: base64Url(key.coefficient)
         }
-    }
+    };
 };
-
-function base64url(b) {
-    return b.toString('base64')
-        .replace(/\+/g, '-')
-        .replace(/\//g, '_')
-        .replace(/=/g, '');
-}
