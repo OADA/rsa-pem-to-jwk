@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Open Ag Data Alliance
+ * Copyright 2021 Open Ag Data Alliance
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@
 var fs = require('fs');
 var path = require('path');
 var expect = require('chai').expect;
-var objectAssign = require('object-assign');
 
 var rsaPemToJwk = require('../rsa-pem-to-jwk');
 
@@ -51,13 +50,13 @@ describe('rsa-pem-to-jwk', function() {
   it('should return a public JWK with extra keys', function() {
     var jwk = rsaPemToJwk(publicPem, {use: 'sig'});
 
-    expect(jwk).to.eql(objectAssign({}, expectedPublic, {use: 'sig'}));
+    expect(jwk).to.eql({...expectedPublic, use: 'sig'});
   });
 
   it('should return a private JWK with extra keys', function() {
     var jwk = rsaPemToJwk(privatePem, {use: 'sig'});
 
-    expect(jwk).to.eql(objectAssign({}, expectedPrivate, {use: 'sig'}));
+    expect(jwk).to.eql({...expectedPrivate, use: 'sig'});
   });
 
   it('should return a public JWK from a private PEM', function() {
@@ -70,7 +69,7 @@ describe('rsa-pem-to-jwk', function() {
       function() {
     var jwk = rsaPemToJwk(privatePem, {use: 'sig'}, 'public');
 
-    expect(jwk).to.eql(objectAssign({}, expectedPublic, {use: 'sig'}));
+    expect(jwk).to.eql({...expectedPublic, use: 'sig'});
   });
 
   it('should fail to return a private JWK from a public PEM', function() {
