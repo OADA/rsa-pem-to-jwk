@@ -20,7 +20,7 @@
     "jwk",
     "jwks"
   ],
-  "author": "Andrew Balmos <andrew@balmos.org> (https://github.com/abalmos)",
+  "author": "xxxzsx <xxxzsx@netc.it> (https://github.com/xxxzsx)",
   "license": "Apache 2.0",
   "bugs": {
     "url": "https://github.com/OADA/rsa-pem-to-jwk/issues"
