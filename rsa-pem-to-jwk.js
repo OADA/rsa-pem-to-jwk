@@ -25,7 +25,26 @@ function arrayBufferToBase64(buffer) {
         Buffer.from(buffer).toString('base64'); // Node.js API
 }
 
-function rsaPemUnpack(pemKey) {
+/*
+ *  Parameters:
+ *   pem - string of PEM encoded RSA key
+ *   extraKeys - custom keys to be included in JWK
+ *   type - 'public' for JWK of only the public portion of the key and
+ *          'private' for a JWK of both the public and private portions
+ *
+ * Prototypes:
+ *  - rsaPemToJwk('...', {...}, 'public');
+ *  - rsaPemToJwk('...', 'private');
+ *  - rsaPemToJwk('...', {...});
+ */
+module.exports = function rsaPemToJwk(pemKey, extraKeys, type) {
+    // Process parameters
+    if (typeof extraKeys === 'string') {
+        type = extraKeys;
+        extraKeys = {};
+    }
+
+    // Unpack the PEM
     pemKey = String(pemKey).trim().split("\n");
 
     // Check and remove RSA key header/footer
@@ -63,7 +82,7 @@ function rsaPemUnpack(pemKey) {
         return derKey.slice(offset, offset += s);
     }
 
-    return {
+    const key = {
         modulus: read(),
         publicExponent: read(),
         privateExponent: read(),
@@ -73,29 +92,6 @@ function rsaPemUnpack(pemKey) {
         exponent2: read(),
         coefficient: read()
     };
-}
-
-/*
- *  Parameters:
- *   pem - string of PEM encoded RSA key
- *   extraKeys - custom keys to be included in JWK
- *   type - 'public' for JWK of only the public portion of the key and
- *          'private' for a JWK of both the public and private portions
- *
- * Prototypes:
- *  - rsaPemToJwk('...', {...}, 'public');
- *  - rsaPemToJwk('...', 'private');
- *  - rsaPemToJwk('...', {...});
- */
-module.exports = function rsaPemToJwk(pemKey, extraKeys, type) {
-    // Process parameters
-    if (typeof extraKeys === 'string') {
-        type = extraKeys;
-        extraKeys = {};
-    }
-
-    // Unpack the PEM
-    const key = rsaPemUnpack(pemKey);
 
     function base64Url(buffer) {
         return arrayBufferToBase64(buffer)
