@@ -36,7 +36,5 @@
     "mocha": "^2.0.1",
     "coveralls": "~2.11.2"
   },
-  "dependencies": {
-    "rsa-unpack": "0.0.6"
-  }
+  "dependencies": {}
 }
