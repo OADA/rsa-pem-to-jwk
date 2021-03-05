@@ -60,7 +60,7 @@ module.exports = function rsaPemToJwk(pem, extraKeys, type) {
     // The public portion is always present
     return {
         kty: 'RSA',
-        extraKeys,
+        ...extraKeys,
         n: base64url(key.modulus),
         e: base64url(exp),
 
