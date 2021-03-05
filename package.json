@@ -37,7 +37,6 @@
     "coveralls": "~2.11.2"
   },
   "dependencies": {
-    "object-assign": "^2.0.0",
     "rsa-unpack": "0.0.6"
   }
 }
