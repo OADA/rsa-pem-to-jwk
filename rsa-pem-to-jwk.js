@@ -50,7 +50,8 @@ module.exports = function rsaPemToJwk(pemKey, extraKeys, type) {
     // Check and remove RSA key header/footer
     let keyType = (/-----BEGIN RSA (PRIVATE|PUBLIC) KEY-----/.exec(pemKey.shift()) || [])[1];
     if (!keyType || !RegExp(`-----END RSA ${keyType} KEY-----`).exec(pemKey.pop())) {
-        throw Error('Headers not supported.');
+        //throw Error('Headers not supported.');
+        return;
     }
 
     // Check requested JWK and given PEM types
@@ -58,7 +59,8 @@ module.exports = function rsaPemToJwk(pemKey, extraKeys, type) {
     if (!type) {
         type = keyType;
     } else if (type === 'private' && keyType === 'public') {
-        throw Error(`RSA type mismatch: requested ${type}, given ${keyType}.`);
+        //throw Error(`RSA type mismatch: requested ${type}, given ${keyType}.`);
+        return;
     }
 
     // PEM base64 to ArrayBuffer
