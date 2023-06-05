@@ -1,7 +1,8 @@
 language: node_js
 node_js:
-- '0.10'
-- '0.11'
+- '16'
+- '18'
+- '20'
 deploy:
   provider: npm
   email: andrew@balmos.org
@@ -12,10 +13,10 @@ deploy:
     all_branches: true
     repo: OADA/rsa-pem-to-jwk
 before_install:
-- npm install -g gulp
+- npm install
 script:
-- gulp lint
-- gulp style
-- npm run cover
+- npm run size
+- npm run lint
+- npm run test:coverage
 after_success:
 - cat ./coverage/lcov.info | ./node_modules/.bin/coveralls --verbose

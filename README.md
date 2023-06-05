@@ -155,9 +155,19 @@ Key)][jwk] format.
     **Default**: *type of input PEM*
 
 ### Usage Example
+#### Typescript
+```typescript
+import * as fs from 'fs';
+import rsaPemToJwk from 'rsa-pem-to-jwk';
+
+var pem = fs.readFileSync('privateKey.pem');
+
+var jwk = rsaPemToJwk(pem, {use: 'sig'}, 'public');
+```
+#### Javascript
 ```javascript
 var fs = require('fs');
-var rsaPemToJwk = require('rsa-pem-to-jwk');
+var rsaPemToJwk = require('rsa-pem-to-jwk').default;
 
 var pem = fs.readFileSync('privateKey.pem');
 

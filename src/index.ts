@@ -12,10 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var rsaUnpack = require('rsa-unpack');
-var objectAssign = require('object-assign');
+import rsaUnpack, { PrivateKey } from '@rexxars/rsa-unpack';
 
 /*
  *  Parameters:
@@ -29,7 +27,11 @@ var objectAssign = require('object-assign');
  *  - rsaPemToJwk('...', 'private');
  *  - rsaPemToJwk('...', {...});
  */
-module.exports = function rsaPemToJwk(pem, extraKeys, type) {
+export default function rsaPemToJwk(
+  pem: string,
+  extraKeys: JwkExtraKeys = {},
+  type: JwkKeyType = undefined
+): PublicJwk | PrivateJwk | undefined {
   // Unpack the PEM
   var key = rsaUnpack(pem);
   if (key === undefined) {
@@ -38,13 +40,13 @@ module.exports = function rsaPemToJwk(pem, extraKeys, type) {
 
   // Process parameters
   if (typeof extraKeys === 'string') {
-    type = extraKeys;
+    type = extraKeys as JwkKeyType;
     extraKeys = {};
   }
-  type = type || (key.privateExponent !== undefined ? 'private' : 'public');
+  type = type || ('privateExponent' in key ? 'private' : 'public');
 
   // Requested private JWK but gave a public PEM
-  if (type == 'private' && key.privateExponent === undefined) {
+  if (type === 'private' && !('privateExponent' in key)) {
     return undefined;
   }
 
@@ -59,29 +61,47 @@ module.exports = function rsaPemToJwk(pem, extraKeys, type) {
   }
 
   // The public portion is always present
-  var r = objectAssign({kty: 'RSA'}, extraKeys, {
+  var r = Object.assign({ kty: 'RSA' }, extraKeys, {
     n: base64url(key.modulus),
     e: base64url(exp),
   });
 
   // Add private
   if (type === 'private') {
-    objectAssign(r, {
-      d: base64url(key.privateExponent),
-      p: base64url(key.prime1),
-      q: base64url(key.prime2),
-      dp: base64url(key.exponent1),
-      dq: base64url(key.exponent2),
-      qi: base64url(key.coefficient),
+    Object.assign(r, {
+      d: base64url((key as PrivateKey).privateExponent),
+      p: base64url((key as PrivateKey).prime1),
+      q: base64url((key as PrivateKey).prime2),
+      dp: base64url((key as PrivateKey).exponent1),
+      dq: base64url((key as PrivateKey).exponent2),
+      qi: base64url((key as PrivateKey).coefficient),
     });
   }
 
   return r;
-};
+}
 
+// @ts-ignore
 function base64url(b) {
   return b.toString('base64')
-          .replace(/\+/g, '-')
-          .replace(/\//g, '_')
-          .replace(/=/g, '');
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '');
 }
+
+export interface PublicJwk {
+  n: string;
+  e: string;
+}
+
+export type PrivateJwk = PublicJwk & {
+  d: string;
+  p: string;
+  q: string;
+  dp: string;
+  dq: string;
+  qi: string;
+};
+
+export type JwkKeyType = undefined | 'public' | 'private';
+export type JwkExtraKeys = string | {};
